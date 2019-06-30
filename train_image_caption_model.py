@@ -26,7 +26,7 @@ def produce_train_dataset(img_name_train, cap_train, cache_image_dir, BATCH_SIZE
                           num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
     # Shuffle and batch
-    dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
+    dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE,  drop_remainder=True)
     dataset = dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
     return dataset
 
@@ -105,13 +105,13 @@ def main(EPOCHS, BATCH_SIZE, BUFFER_SIZE, checkpoint_path, cache_image_dir, raw_
                     epoch + 1, batch, batch_loss.numpy() / int(target.shape[1])))
         # storing the epoch end loss value to plot later
         loss_plot.append(total_loss / num_steps)
-        print(f"loss_plot {loss_plot}")
+        #print(f"loss_plot {loss_plot}")
         if epoch % 5 == 0: ckpt_manager.save()
 
         print('Epoch {} Loss {:.6f}'.format(epoch + 1, total_loss / num_steps))
         print('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
 
-    print("loss plot {loss_plot}")
+    #print(f"loss plot {loss_plot}")
     plot_loss_picture(loss_plot, plt_show=False)
 
 

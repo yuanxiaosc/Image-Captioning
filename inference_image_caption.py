@@ -14,6 +14,9 @@ def plot_attention(idx, image, result, attention_plot, plt_show=False):
     fig = plt.figure(figsize=(10, 10))
 
     len_result = len(result)
+    if not (len_result % 2) == 0:
+        len_result = len_result - 1
+
     for l in range(len_result):
         temp_att = np.resize(attention_plot[l], (8, 8))
         ax = fig.add_subplot(len_result // 2, len_result // 2, l + 1)
@@ -100,7 +103,7 @@ def main(model_predicte_number, checkpoint_path, raw_image_path_and_caption_cont
         print('Prediction Caption:', ' '.join(result))
         if plot_image_attention:
             Image.open(image)
-        #plot_attention(idx, image, result, attention_plot, plt_show=False) #Todo:fix Bug
+        plot_attention(idx, image, result, attention_plot, plt_show=False) #Todo:fix Bug
         print("")
 
 

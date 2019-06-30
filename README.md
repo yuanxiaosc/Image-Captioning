@@ -1,5 +1,5 @@
 # Image-Captioning
-Template code for image caption or image to text (TensorFlow version 2). 图片描述或者图片生成文本的模板代码
+CNN-Encoder and RNN-Decoder (Bahdanau Attention) for image caption or image to text on [MS-COCO](http://cocodataset.org/#home) dataset.
 
 ## Task Description 
 Given an image like the example below, our goal is to generate a caption such as "a surfer riding on a wave".
@@ -12,13 +12,32 @@ To accomplish this, you'll use an attention-based model, which enables us to see
 
 The model architecture is similar to [Show, Attend and Tell: Neural Image Caption Generation with Visual Attention](https://arxiv.org/abs/1502.03044).
 
+## Main principle
+
+The model consists of CNN-Encoder and RNN-Decoder. The CNN-Encoder is used to extract the information of the input image to generate the intermediate representation H, and then use RNN-Decode to gradually decode the H (using Bahdanau Attention) to generate a text description corresponding to the image.
+
+模型由CNN-Encoder和RNN-Decoder组成，首先使用CNN-Encoder提取输入图片的信息生成中间表示H，然后使用RNN-Decode对H逐步解码（使用了BahdanauAttention）生成图片对应的文本描述。
+
+```
+Input: image_features.shape (16, 64, 2048)
+---------------Pass by cnn_encoder---------------
+Output: image_features_encoder.shape (16, 64, 256)
+
+Input: batch_words.shape (16, 1)
+Input: rnn state shape (16, 512)
+---------------Pass by rnn_decoder---------------
+Output: out_batch_words.shape (16, 5031)
+Output: out_state.shape (16, 512)
+Output: attention_weights.shape (16, 64, 1)
+```
+
 ## Code test pass
 + Pyhon 3.6
 + TensorFlow version 2
 
 ## Usage
 
-### Preparing data
+### 1. Preparing data
 
 ```
 python data_utils.py
@@ -32,21 +51,36 @@ If the code can't download the data automatically because of network reasons, yo
 3. Downloading images data from http://images.cocodataset.org/zips/train2014.zip
 4. unzip train2014.zip and move train2014 to project
 
-### Train model
+### 2. Train model
 
 ```
 python train_image_caption_model.py
 ```
 
-### Model predicte
+### 3. Model inference
 
 ```
-python predicte_image_caption.py
+python inference_image_caption.py
 ```
+
+
+## Experimental result
+
+**loss**
+
+![](loss.png)
+
+**inference_image_caption outputs**
+
+![](1.png)
+![](2.png)
+![](3.png)
+![](4.png)
 
 
 ## Reference Code
-> [image_captioning.ipynb](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/image_captioning.ipynb)
+
+> [image_captioning.ipynb](image_captioning.ipynb)
 
 This notebook is an end-to-end example. When you run the notebook, it downloads the [MS-COCO](http://cocodataset.org/#home) dataset, preprocesses and caches a subset of images using Inception V3, trains an encoder-decoder model, and generates captions on new images using the trained model.
 
